@@ -4,6 +4,12 @@ const vaciarCarrito = document.getElementById("vaciar-carrito");
 const listaCursos = document.getElementById("lista-cursos");
 let articulosCarrito = [];
 
+document.addEventListener("DOMContentLoaded", () => {
+  articulosCarrito = JSON.parse(localStorage.getItem("carrito")) || [];
+
+  carritoHTML();
+});
+
 listaCursos.onclick = (e) => {
   e.preventDefault();
   if (e.target.classList.contains("agregar-carrito")) {
@@ -85,6 +91,12 @@ const carritoHTML = () => {
 		`;
     contenedorCarrito.appendChild(row);
   });
+
+  sincronizarStorage();
+};
+
+const sincronizarStorage = () => {
+  localStorage.setItem("carrito", JSON.stringify(articulosCarrito));
 };
 
 const limpiarHTML = () => {
