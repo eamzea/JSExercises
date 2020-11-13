@@ -14,6 +14,7 @@ export const ui = new UI();
 export const administrarCitas = new Citas();
 
 let editando;
+let DB;
 
 const citaObj = {
   mascota: "",
@@ -47,27 +48,48 @@ export const nuevaCita = (e) => {
   }
 
   if (editando) {
-    ui.imprimirAlerta("Editado correctamente");
-
     administrarCitas.editarCita({ ...citaObj });
 
-    formulario.querySelector('button[type="submit"]').textContent =
-      "Crear cita";
+    const transaction = DB.transaction(["citas"], "readwrite");
 
-    editando = false;
+    const objectStore = transaction.objectStore("citas");
+
+    objectStore.put(citaObj);
+
+    transaction.oncomplete = () => {
+      ui.imprimirAlerta("Editado correctamente");
+
+      formulario.querySelector('button[type="submit"]').textContent =
+        "Crear cita";
+
+      editando = false;
+    };
+
+    transaction.onerror = () => {
+      ui.imprimirAlerta("Hubo un error al actualizar la cita", "error");
+    };
   } else {
     citaObj.id = Date.now();
 
     administrarCitas.agregarCita({ ...citaObj });
 
-    ui.imprimirAlerta("Cita agregada correctamente");
+    const transaction = DB.transaction(["citas"], "readwrite");
+
+    const objectStore = transaction.objectStore("citas");
+
+    objectStore.add(citaObj);
+
+    transaction.oncomplete = () => {
+      console.log("Cita agregada");
+      ui.imprimirAlerta("Cita agregada correctamente");
+    };
   }
 
   formulario.reset();
 
   reiniciarObjeto();
 
-  ui.imprimirCitas(administrarCitas);
+  ui.imprimirCitas(DB);
 };
 
 export const reiniciarObjeto = () => {
@@ -101,4 +123,35 @@ export const cargarEdicion = (cita) => {
     "Guardar cambios";
 
   editando = true;
+};
+
+export const crearDB = () => {
+  const crearDB = window.indexedDB.open("citas", 1);
+
+  crearDB.onerror = () => {};
+
+  crearDB.onsuccess = () => {
+    DB = crearDB.result;
+
+    ui.imprimirCitas(DB);
+  };
+
+  crearDB.onupgradeneeded = (e) => {
+    const db = e.target.result;
+
+    const objectStore = db.createObjectStore("citas", {
+      keyPath: "id",
+      autoIncrement: true,
+    });
+
+    objectStore.createIndex("mascota", "mascota", { unique: false });
+    objectStore.createIndex("propietario", "propietario", { unique: false });
+    objectStore.createIndex("telefono", "telefono", { unique: false });
+    objectStore.createIndex("fecha", "fecha", { unique: false });
+    objectStore.createIndex("hora", "hora", { unique: false });
+    objectStore.createIndex("sintomas", "sintomas", { unique: false });
+    objectStore.createIndex("id", "id", { unique: true });
+
+    console.log("DataBase creada y lista");
+  };
 };

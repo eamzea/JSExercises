@@ -1,4 +1,4 @@
-import { datosCita, nuevaCita } from "./funciones.js";
+import { crearDB, datosCita, nuevaCita } from "./funciones.js";
 import {
   fechaInput,
   formulario,
@@ -16,3 +16,7 @@ fechaInput.oninput = datosCita;
 horaInput.oninput = datosCita;
 sintomasInput.oninput = datosCita;
 formulario.onsubmit = nuevaCita;
+
+window.onload = () => {
+  crearDB();
+};

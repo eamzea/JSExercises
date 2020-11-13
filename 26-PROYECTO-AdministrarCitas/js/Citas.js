@@ -9,10 +9,20 @@ class Citas {
     this.citas = [...this.citas, cita];
   }
 
-  eliminarCita(id) {
-    this.citas = this.citas.filter((cita) => cita.id !== id);
-    ui.imprimirAlerta("La cita se eliminó correctamente");
-    ui.imprimirCitas(administrarCitas);
+  eliminarCita(db, id) {
+    const transaction = db.transaction(["citas"], "readwrite");
+    const objectStore = transaction.objectStore("citas");
+
+    objectStore.delete(id);
+
+    transaction.oncomplete = () => {
+      ui.imprimirAlerta("La cita se eliminó correctamente");
+      ui.imprimirCitas(db);
+    };
+
+    transaction.onerror = () => {
+      ui.imprimirAlerta("Hubo un error al borrar la cita", "error");
+    };
   }
 
   editarCita(citaActualizada) {
