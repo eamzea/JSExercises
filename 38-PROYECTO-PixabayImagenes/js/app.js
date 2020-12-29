@@ -101,23 +101,37 @@ const calcularPaginas = total => {
   return parseInt(Math.ceil(total / registros));
 };
 
-const buscarImagenes = () => {
+const buscarImagenes = async () => {
   spinner.classList.remove('hidden');
 
   const key = '19631690-a75669b666d0b7a2777e34a26';
   const url = 'https://pixabay.com/api/';
 
-  fetch(
-    `${url}?key=${key}&q=${encodeURI(
-      termino
-    )}&image_type=photo&per_page=${registros}&page=${paginaActual}`
-  )
-    .then(response => response.json())
-    .then(data => {
-      paginas = calcularPaginas(data.totalHits);
-      spinner.classList.add('hidden');
-      pintarImagenes(data.hits);
-    });
+  // Promises
+  // fetch(
+  //   `${url}?key=${key}&q=${encodeURI(
+  //     termino
+  //   )}&image_type=photo&per_page=${registros}&page=${paginaActual}`
+  // )
+  //   .then(response => response.json())
+  //   .then(data => {
+  //     paginas = calcularPaginas(data.totalHits);
+  //     spinner.classList.add('hidden');
+  //     pintarImagenes(data.hits);
+  //   });
+
+  try {
+    // Async/Await
+    const respuesta = await fetch(
+      `${url}?key=${key}&q=${encodeURI(
+        termino
+      )}&image_type=photo&per_page=${registros}&page=${paginaActual}`
+    );
+    const data = await respuesta.json();
+    paginas = calcularPaginas(data.totalHits);
+    spinner.classList.add('hidden');
+    pintarImagenes(data.hits);
+  } catch (error) {}
 };
 
 const validarFormulario = e => {

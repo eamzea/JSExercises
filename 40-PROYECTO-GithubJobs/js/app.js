@@ -49,17 +49,23 @@ const mostrarResultados = vacantes => {
   });
 };
 
-const realizarConsulta = criterio => {
+const realizarConsulta = async criterio => {
   spinner.classList.remove('d-none');
 
   const url = `https://jobs.github.com/positions.json?search=${criterio}`;
   const cors = `http://api.allorigins.win/get?url=${url}`;
 
-  axios.get(cors).then(respuesta => {
-    const data = JSON.parse(respuesta.data.contents);
+  // Promises
+  // axios.get(cors).then(respuesta => {
+  //   const data = JSON.parse(respuesta.data.contents);
 
-    return mostrarResultados(data);
-  });
+  //   return mostrarResultados(data);
+  // });
+
+  // Async/Await
+  const respuesta = await axios.get(cors);
+  const data = await JSON.parse(respuesta.data.contents);
+  mostrarResultados(data);
 };
 
 const validarBusqueda = e => {
