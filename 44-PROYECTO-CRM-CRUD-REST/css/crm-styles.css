@@ -1,0 +1,8 @@
+body .main-contacts {
+  max-height: 100vh;
+}
+
+.table-container {
+  max-height: 85vh;
+  overflow: overlay;
+}
