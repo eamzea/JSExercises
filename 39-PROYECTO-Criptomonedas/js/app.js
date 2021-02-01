@@ -19,19 +19,47 @@ const obtenerCriptoMonedas = criptomonedas =>
   });
 
 const selectCriptoMonedas = criptomonedas => {
-  criptomonedas.forEach(cripto => {
+  // Medir performance
+
+  // const start = performance.now();
+
+  // criptomonedas.forEach(cripto => {
+  //   const {
+  //     CoinInfo: { FullName, Name },
+  //   } = cripto;
+
+  //   const option = document.createElement('option');
+  //   option.value = Name;
+  //   option.innerText = FullName;
+
+  //   selectorCriptoMoneda.appendChild(option);
+  // });
+
+  // selectorCriptoMoneda.onchange = leerValor;
+
+  // const end = performance.now();
+
+  // console.log(end - start);
+
+  const start1 = performance.now();
+
+  for (let i = 0; i < criptomonedas.length; i++) {
     const {
       CoinInfo: { FullName, Name },
-    } = cripto;
+    } = criptomonedas[i];
 
     const option = document.createElement('option');
     option.value = Name;
     option.innerText = FullName;
 
     selectorCriptoMoneda.appendChild(option);
-  });
+  }
 
   selectorCriptoMoneda.onchange = leerValor;
+
+  const end1 = performance.now();
+
+  console.log(end1 - start1);
 };
 
 const consultarCriptoMonedas = async () => {
@@ -78,6 +106,8 @@ const imprimirPrecio = cotizacion => {
   spinner.classList.add('d-none');
 
   const { PRICE, HIGHDAY, LOWDAY, CHANGEPCT24HOUR, LASTUPDATE } = cotizacion;
+
+  debugger;
 
   const precio = document.createElement('p');
   precio.classList.add('precio');
